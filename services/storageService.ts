@@ -9,6 +9,7 @@ export const getLogs = (): DailyLog[] => {
   try {
     return JSON.parse(stored);
   } catch (e) {
+    console.error("Failed to parse logs", e);
     return [];
   }
 };
@@ -40,8 +41,14 @@ export const deleteLog = (id: string): DailyLog[] => {
 };
 
 export const getSettings = (): UserSettings => {
-  const stored = localStorage.getItem(SETTINGS_KEY);
-  if (stored) return JSON.parse(stored);
+  try {
+    const stored = localStorage.getItem(SETTINGS_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch (e) {
+    console.warn("Corrupt settings data detected, resetting to defaults.");
+    // Clear corrupt data to prevent persistent crash
+    localStorage.removeItem(SETTINGS_KEY);
+  }
   // Default settings
   return { name: 'User', familyMode: false, theme: 'red_alert' };
 };

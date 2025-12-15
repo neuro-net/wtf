@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BENZO_DATA } from '../constants';
 import { DailyLog, TakenMedication } from '../types';
 import { deleteLog } from '../services/storageService'; // Import deleteLog
-import { Plus, Trash2, Save, Calendar, AlertTriangle, Terminal, MessageSquare, BrainCircuit, Clock, RotateCcw } from 'lucide-react';
+import { Plus, Trash2, Save, AlertTriangle, Terminal, BrainCircuit, Clock } from 'lucide-react';
 
 interface TrackerProps {
   onSave: (log: DailyLog) => void;
