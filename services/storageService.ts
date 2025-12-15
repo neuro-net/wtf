@@ -42,11 +42,61 @@ export const deleteLog = (id: string): DailyLog[] => {
 export const getSettings = (): UserSettings => {
   const stored = localStorage.getItem(SETTINGS_KEY);
   if (stored) return JSON.parse(stored);
-  return { name: 'User', familyMode: false };
+  // Default settings
+  return { name: 'User', familyMode: false, theme: 'red_alert' };
 };
 
 export const saveSettings = (settings: UserSettings) => {
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+};
+
+export const clearData = () => {
+  localStorage.removeItem(LOGS_KEY);
+  localStorage.removeItem(SETTINGS_KEY);
+  window.location.reload();
+};
+
+export const downloadCSV = (logs: DailyLog[]) => {
+  if (logs.length === 0) return;
+
+  // Header row
+  const headers = ['Date', 'Timestamp_Epoch', 'Mood_1_10', 'Alcohol_Consumed', 'Alcohol_Units', 'Notes', 'Medications_Summary'];
+  
+  const rows = logs.map(log => {
+    // Flatten medications into a readable string
+    const medsSummary = log.medications.map(m => {
+       const time = m.timeTaken ? `[${m.timeTaken}]` : '';
+       const name = m.customName ? `${m.customName}(Other)` : m.medicationId;
+       const reason = m.reason ? `(Reason: ${m.reason})` : '';
+       return `${time} ${name} ${m.amount}mg ${reason}`;
+    }).join('; ');
+
+    // Escape fields that might contain commas
+    const safeNotes = `"${(log.notes || '').replace(/"/g, '""')}"`;
+    const safeMeds = `"${medsSummary.replace(/"/g, '""')}"`;
+
+    return [
+      log.date,
+      log.timestamp,
+      log.mood || '',
+      log.alcoholConsumed ? 'YES' : 'NO',
+      log.alcoholUnits,
+      safeNotes,
+      safeMeds
+    ].join(',');
+  });
+
+  const csvContent = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `soberstats_export_${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };
 
 // Seeder for demo purposes
@@ -71,7 +121,7 @@ export const seedData = () => {
       alcoholConsumed,
       alcoholUnits,
       medications: [
-        { medicationId: 'diazepam', amount: 10 + (i > 20 ? 5 : 0) } // Tapering diazepam slightly
+        { medicationId: 'diazepam', amount: 10 + (i > 20 ? 5 : 0), timeTaken: '09:00' } // Tapering diazepam slightly
       ],
       mood: Math.floor(Math.random() * 6) + 3, // Random mood 3-9
       timestamp: d.getTime(),

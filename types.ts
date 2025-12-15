@@ -10,6 +10,7 @@ export interface MedicationReference {
 export interface TakenMedication {
   medicationId: string;
   amount: number; // in mg usually
+  timeTaken?: string; // HH:MM 24h format
   customName?: string; // For 'other' category
   reason?: string; // Context for taking the med
 }
@@ -28,6 +29,8 @@ export interface DailyLog {
 export interface UserSettings {
   name: string;
   familyMode: boolean; // Read-only mode
+  password?: string; // Optional security lock
+  theme: 'red_alert' | 'noir' | 'synthwave';
 }
 
 export enum ViewState {
@@ -36,4 +39,14 @@ export enum ViewState {
   STATISTICS = 'STATISTICS',
   REFERENCE = 'REFERENCE',
   SETTINGS = 'SETTINGS'
+}
+
+export interface ThemeColors {
+  primary: string; // Main text/accent
+  secondary: string; // Muted accent
+  border: string; // Border color
+  background: string; // Main bg
+  mutedBg: string; // Panel bg
+  success: string;
+  chartGrid: string;
 }
