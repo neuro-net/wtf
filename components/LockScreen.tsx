@@ -84,7 +84,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock, correctPasswor
               />
             </div>
             
-            {error && <p className="text-xs text-red-500 font-bold uppercase tracking-widest animate-pulse">>> ACCESS DENIED <<</p>}
+            {error && <p className="text-xs text-red-500 font-bold uppercase tracking-widest animate-pulse">&gt;&gt; ACCESS DENIED &lt;&lt;</p>}
 
             <button
               type="submit"

@@ -218,7 +218,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ settings, onSaveSett
 
         <div className="space-y-4">
           <p className="text-[var(--primary)] text-sm font-bold uppercase">
-             >> WARNING: IRREVERSIBLE ACTION
+             &gt;&gt; WARNING: IRREVERSIBLE ACTION
           </p>
           <p className="text-[var(--secondary)] text-xs font-mono mb-4">
              Executing system purge will wipe all local storage databases. Recovery is impossible.
